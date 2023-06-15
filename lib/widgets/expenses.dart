@@ -16,22 +16,22 @@ class _ExpensesState extends State<Expenses> {
         title: "Burger",
         amount: 120.50,
         date: DateTime.now(),
-        category: Categories.food),
+        category: Category.food),
     Expense(
         title: "Hotel Stay",
         amount: 21200,
         date: DateTime.now(),
-        category: Categories.work),
+        category: Category.work),
     Expense(
         title: "Train ticket",
         amount: 10.50,
         date: DateTime.now(),
-        category: Categories.travel),
+        category: Category.travel),
     Expense(
         title: "Movie",
         amount: 100.00,
         date: DateTime.now(),
-        category: Categories.leisure),
+        category: Category.leisure),
   ];
 
   @override
