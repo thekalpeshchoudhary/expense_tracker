@@ -20,16 +20,37 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void _removeExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+  }
+
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
-        context: context, builder: (ctx) => NewExpense(_addExpense));
+        isScrollControlled: true,
+        context: context,
+        builder: (ctx) => NewExpense(_addExpense));
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget mainContent = const Center(
+      child: Text('No Expenses found. Start adding some!'),
+    );
+
+    if (_registeredExpenses.isNotEmpty) {
+      mainContent = ExpensesList(
+          expenses: _registeredExpenses, onRemoveExpense: _removeExpense);
+    }
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Flutter Expense Tracker'),
+          title: const Text(
+            'Flutter Expense Tracker',
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 43, 0, 50)),
+          ),
           actions: [
             IconButton(
                 onPressed: _openAddExpenseOverlay, icon: const Icon(Icons.add)),
@@ -38,7 +59,9 @@ class _ExpensesState extends State<Expenses> {
         body: Column(
           children: [
             const Text('Chart'),
-            Expanded(child: ExpensesList(expenses: _registeredExpenses)),
+            Expanded(
+              child: mainContent,
+            )
           ],
         ));
   }

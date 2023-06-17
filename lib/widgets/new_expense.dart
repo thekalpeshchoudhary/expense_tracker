@@ -7,7 +7,7 @@ final formatter = DateFormat.yMd();
 class NewExpense extends StatefulWidget {
   const NewExpense(this.onAddExpense, {super.key});
 
-  final void Function  (Expense expense) onAddExpense;
+  final void Function(Expense expense) onAddExpense;
 
   @override
   State<NewExpense> createState() {
@@ -67,7 +67,7 @@ class _NewExpenseState extends State<NewExpense> {
           amount: enteredAmount,
           date: theDate!,
           category: _selectedCategory));
-          Navigator.pop(context);
+      Navigator.pop(context);
     }
   }
 
@@ -81,7 +81,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(25),
+      padding: const EdgeInsets.fromLTRB(20,50,20,20),
       child: Column(
         children: [
           TextField(
