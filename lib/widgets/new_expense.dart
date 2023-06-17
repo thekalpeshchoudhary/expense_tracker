@@ -5,7 +5,10 @@ import 'package:expense_tracker/models/expense.dart';
 final formatter = DateFormat.yMd();
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense(this.onAddExpense, {super.key});
+
+  final void Function  (Expense expense) onAddExpense;
+
   @override
   State<NewExpense> createState() {
     return _NewExpenseState();
@@ -15,7 +18,7 @@ class NewExpense extends StatefulWidget {
 class _NewExpenseState extends State<NewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
-  DateTime theDate = DateTime.now();
+  DateTime? theDate;
   Category _selectedCategory = Category.food;
 
   void _percentDatePicker() {
@@ -27,11 +30,45 @@ class _NewExpenseState extends State<NewExpense> {
             firstDate: firstDate,
             lastDate: now)
         .then((value) => {
-              setState(() {
-                theDate = value!;
-                print(value);
-              })
+              if (value != null)
+                {
+                  setState(() {
+                    theDate = value;
+                  })
+                }
             });
+  }
+
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        theDate == null) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Invalid Input'),
+          content: const Text(
+              'Please make sure a valid title, amount and date was entered'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                },
+                child: const Text('Close'))
+          ],
+        ),
+      );
+      return;
+    } else {
+      widget.onAddExpense(Expense(
+          title: _titleController.text.trim(),
+          amount: enteredAmount,
+          date: theDate!,
+          category: _selectedCategory));
+          Navigator.pop(context);
+    }
   }
 
   @override
@@ -44,7 +81,7 @@ class _NewExpenseState extends State<NewExpense> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(25),
       child: Column(
         children: [
           TextField(
@@ -75,7 +112,9 @@ class _NewExpenseState extends State<NewExpense> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(formatter.format(theDate)),
+                    Text(theDate != null
+                        ? formatter.format(theDate!)
+                        : 'Select Date'),
                     IconButton(
                       onPressed: _percentDatePicker,
                       icon: const Icon(Icons.calendar_month),
@@ -121,9 +160,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  print({_titleController.text, _amountController.text});
-                },
+                onPressed: _submitExpenseData,
                 child: const Text('Save Expense'),
               ),
             ],
